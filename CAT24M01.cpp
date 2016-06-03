@@ -2,12 +2,15 @@
 
 
 #include "Arduino.h"
-#include <Wire.h>
+#include "../SoftI2CMaster/SoftI2CMaster.h"
 #include "CAT24M01.h"
 
 
 #define DEFAULT_ADDRESS		0x0A
 
+const byte sclPin = 5;
+const byte sdaPin = 4;
+SoftI2CMaster Wire = SoftI2CMaster( sclPin, sdaPin, 0 );
 
 // Constructor
 CAT24M01::CAT24M01(uint8_t address)
@@ -18,7 +21,7 @@ CAT24M01::CAT24M01(uint8_t address)
 
 void CAT24M01::begin()						// Initialize interfaces
 {  
-	Wire.begin();        					// Join I2C bus
+	//Wire.begin();        					// Join I2C bus
 }
 
 
@@ -92,13 +95,14 @@ uint32_t CAT24M01::read(uint32_t address, uint8_t * buffer)	// Read a byte from 
 		Serial.println(errNo);
 	}
 	
-    Wire.requestFrom((uint8_t)this->busAddress, (uint8_t)1);
-	
+   // Wire.requestFrom((uint8_t)this->busAddress, (uint8_t)1);
+	Wire.requestFrom((uint8_t)((DEFAULT_ADDRESS << 3) | ((this->busAddress) << 1) | ((address >> 16) & 0x01)), (uint8_t)1);
     if (Wire.available()) 
 	{
 		*buffer = Wire.read();
 	}
 	
+	Wire.endTransmission();
     return 1;
 }
 
@@ -118,7 +122,8 @@ uint32_t CAT24M01::read(uint32_t address, uint8_t * buffer, uint8_t numBytes)
 		Serial.println(errNo);
 	}
 	
-    Wire.requestFrom((int)this->busAddress, (int)numBytes);
+    //Wire.requestFrom((int)this->busAddress, (int)numBytes);
+	Wire.requestFrom((uint8_t)((DEFAULT_ADDRESS << 3) | ((this->busAddress) << 1) | ((address >> 16) & 0x01)), (uint8_t)numBytes);
 	
     uint32_t index;
     for (index = 0; index < numBytes; index++ )
@@ -128,12 +133,12 @@ uint32_t CAT24M01::read(uint32_t address, uint8_t * buffer, uint8_t numBytes)
 			buffer[index] = Wire.read();
 		}
 	}
-	
+	Wire.endTransmission();
 	return index;
 }
 
   
-uint8_t CAT24M01::getStatus()				// Read the EEPROM status 
+uint8_t CAT24M01::getStatus(uint32_t address)				// Read the EEPROM status 
 {
 	uint8_t retVal = 0;
 	
