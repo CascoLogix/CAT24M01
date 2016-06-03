@@ -28,7 +28,7 @@ public:
 	uint32_t read(uint32_t address, 		// Read a byte from EEPROM
 					uint8_t * buffer, 
 					uint8_t numBytes);
-	uint8_t getStatus();					// Read the EEPROM status register
+	uint8_t getStatus(uint32_t address);					// Read the EEPROM status register
 
 private:
 	uint8_t busAddress;						// I2C Device Address
