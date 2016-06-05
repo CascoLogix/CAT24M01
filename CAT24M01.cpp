@@ -92,7 +92,7 @@ uint32_t CAT24M01::read(uint32_t address, uint8_t * buffer)	// Read a byte from 
 		Serial.println(errNo);
 	}
 	
-    Wire.requestFrom((uint8_t)this->busAddress, (uint8_t)1);
+    Wire.requestFrom((uint8_t)((DEFAULT_ADDRESS << 3) | ((this->busAddress) << 1) | ((address >> 16) & 0x01)), (uint8_t)1);
 	
     if (Wire.available()) 
 	{
