@@ -5,17 +5,17 @@
 // 
 
 
-#include <M24M02.h>
+#include <M24M01.h>
 #include <Wire.h>
 
 
-M24M02 EEPROM1(0);      // Create instance of MCP23S08 with CS on pin 3
+M24M01 EEPROM;
 
 void setup() 
 {
   Serial.begin(9600);
-  EEPROM1.begin();      // Call begin to initialize instance
-  Serial.print(EEPROM1.getStatus(), BIN);
+  EEPROM.begin();      // Call begin to initialize instance
+  Serial.print(EEPROM.getStatus(), BIN);
   Serial.print("Done.");
 }
 

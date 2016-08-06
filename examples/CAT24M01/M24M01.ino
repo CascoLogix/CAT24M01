@@ -5,27 +5,27 @@
 // 
 
 
-#include <M24M02.h>
+#include <M24M01.h>
 #include <Wire.h>
 
-const char str1[] = "Hello from M24M02";
+const char str1[] = "Hello from M24M01";
 
 char readStr[64];
 
-M24M02 EEPROM1(0);      // Create instance of MCP23S08 with CS on pin 3
+M24M01 EEPROM;
 
 void setup() 
 {
   Serial.begin(9600);
   
-  EEPROM1.begin();      // Call begin to initialize instance
+  EEPROM.begin();      // Call begin to initialize instance
   
   Serial.print("str1 length is: ");
   Serial.println(strlen(str1));
-  Serial.print(EEPROM1.write(0, (uint8_t*)str1, strlen(str1)));
+  Serial.print(EEPROM.write(0, (uint8_t*)str1, strlen(str1)));
   Serial.println(" bytes written.");
   
-  Serial.print(EEPROM1.read(0, (uint8_t*)readStr, 64));
+  Serial.print(EEPROM.read(0, (uint8_t*)readStr, 64));
   Serial.println(" bytes read.");
   Serial.println(readStr);
 
