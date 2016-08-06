@@ -133,7 +133,7 @@ uint32_t CAT24M01::read(uint32_t address, uint8_t * buffer, uint8_t numBytes)
 }
 
   
-uint8_t CAT24M01::getStatus()				// Read the EEPROM status 
+uint8_t CAT24M01::getStatus(uint32_t address)				// Read the EEPROM status 
 {
 	uint8_t retVal = 0;
 	
