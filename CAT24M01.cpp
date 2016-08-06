@@ -6,8 +6,9 @@
 #include "CAT24M01.h"
 
 
-#define DEFAULT_ADDRESS		0x0A
+#define DEFAULT_ADDRESS		0x0A	// From CAT24M01 Datasheet
 
+#define DEBUG_CAT24M01			// Uncomment to get serial UART debug strings
 
 // Constructor
 CAT24M01::CAT24M01(uint8_t address)
@@ -32,11 +33,13 @@ uint32_t CAT24M01::write(uint32_t address, uint8_t data)			// Write a byte to EE
     Wire.write(data);
     errNo = Wire.endTransmission();
 	
+#ifdef DEBUG_CAT24M01
 	if (errNo)
 	{
 		Serial.print("Write error: ");
 		Serial.println(errNo);
 	}
+#endif // DEBUG_CAT24M01
 	
 	return 1;
 }
@@ -54,26 +57,15 @@ uint32_t CAT24M01::write(uint32_t address, uint8_t * buffer, uint8_t numBytes)
 	bytesWritten = Wire.write(buffer, numBytes);
     errNo = Wire.endTransmission();
 	
+#ifdef DEBUG_CAT24M01
 	if (errNo)
 	{
 		Serial.print("Write error: ");
 		Serial.println(errNo);
 	}
+#endif // DEBUG_CAT24M01
 	
 	return (uint32_t)bytesWritten;
-	
-	/*
-	uint32_t index;
-    for (index = 0; index < numBytes; index++)
-    {
-		Wire.write(buffer[index]);
-		//Serial.write(buffer[index]);
-	}
-	
-    Wire.endTransmission();
-	
-	return index;
-	*/
 }
   
   
@@ -86,13 +78,15 @@ uint32_t CAT24M01::read(uint32_t address, uint8_t * buffer)	// Read a byte from 
     Wire.write((uint8_t)(address & 0xFF)); 	// LSB
     errNo = Wire.endTransmission();
 	
+#ifdef DEBUG_CAT24M01
 	if (errNo)
 	{
 		Serial.print("Read error: ");
 		Serial.println(errNo);
 	}
+#endif // DEBUG_CAT24M01
 	
-    Wire.requestFrom((uint8_t)((DEFAULT_ADDRESS << 3) | ((this->busAddress) << 1) | ((address >> 16) & 0x01)), (uint8_t)1);
+    Wire.requestFrom((uint8_t)((DEFAULT_ADDRESS << 3) | (this->busAddress)), (uint8_t)1);
 	
     if (Wire.available()) 
 	{
@@ -112,13 +106,15 @@ uint32_t CAT24M01::read(uint32_t address, uint8_t * buffer, uint8_t numBytes)
     Wire.write((uint8_t)(address & 0xFF)); 	// LSB
     errNo = Wire.endTransmission();
 	
+#ifdef DEBUG_CAT24M01
 	if (errNo)
 	{
 		Serial.print("Read error: ");
 		Serial.println(errNo);
 	}
+#endif // DEBUG_CAT24M01
 	
-    Wire.requestFrom((int)this->busAddress, (int)numBytes);
+    Wire.requestFrom((uint8_t)((DEFAULT_ADDRESS << 3) | (this->busAddress)), (int)numBytes);
 	
     uint32_t index;
     for (index = 0; index < numBytes; index++ )
